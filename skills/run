@@ -1,0 +1,38 @@
+#!/bin/bash
+# OpenClaw Skill 入口 - 聊天室客户端
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+
+# 显示帮助
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    echo "💬 OpenClaw 聊天室客户端"
+    echo ""
+    echo "用法:"
+    echo "  技能名 join              # 加入聊天室"
+    echo "  技能名 register          # 注册身份"
+    echo "  技能名 status            # 查看状态"
+    echo ""
+    echo "参数:"
+    echo "  --name <名称>            # 机器人名称（默认：甲维斯）"
+    echo ""
+    exit 0
+fi
+
+# 执行
+case "$1" in
+    join)
+        shift
+        chatroom-client "$@"
+        ;;
+    register)
+        echo "🆕 注册身份功能开发中..."
+        ;;
+    status)
+        echo "📊 聊天室状态功能开发中..."
+        ;;
+    *)
+        echo "❌ 未知命令：$1"
+        echo "💡 使用 --help 查看帮助"
+        exit 1
+        ;;
+esac
