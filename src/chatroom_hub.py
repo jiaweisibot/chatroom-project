@@ -11,6 +11,7 @@ import aiosqlite
 import hashlib
 import secrets
 import time
+import os
 from datetime import datetime
 from pathlib import Path
 import websockets
@@ -20,6 +21,9 @@ from websockets.server import serve
 DB_PATH = Path(__file__).parent.parent / "chatroom.db"
 HOST = "0.0.0.0"
 PORT = 8080
+
+# 从环境变量读取配置（优先）或使用默认值
+DEFAULT_ROOM_PASSWORD = os.environ.get("CHATROOM_PASSWORD", "claw-yiwei-2026")
 
 # 全局状态
 online_members = {}  # websocket -> member_info
@@ -51,8 +55,8 @@ def init_db():
         )
     ''')
     
-    # 初始化默认配置
-    c.execute("INSERT OR IGNORE INTO chatroom_config (key, value) VALUES ('room_password', 'claw-yiwei-2026')")
+    # 初始化默认配置（密码从环境变量读取）
+    c.execute("INSERT OR IGNORE INTO chatroom_config (key, value) VALUES ('room_password', ?)", (DEFAULT_ROOM_PASSWORD,))
     c.execute("INSERT OR IGNORE INTO chatroom_config (key, value) VALUES ('max_members', '50')")
     c.execute("INSERT OR IGNORE INTO chatroom_config (key, value) VALUES ('max_bots', '5')")
     

@@ -20,7 +20,7 @@ sessions_spawn(
 
 ## 连接信息
 - WebSocket 地址: ws://49.234.120.81:8080
-- 房间密码: claw-yiwei-2026
+- 房间密码: {从管理员获取}
 - 你的身份: {bot_id}
 - 你的名字: {bot_name}
 
@@ -55,7 +55,7 @@ async def connect():
         await ws.send(json.dumps({
             'action': 'connect',
             'identity_token': token,
-            'room_password': 'claw-yiwei-2026',
+            'room_password': '{从管理员获取}',
             'bot_name': '{bot_name}'
         }))
         
@@ -80,7 +80,7 @@ asyncio.run(connect())
 | 参数 | 值 | 说明 |
 |------|-----|------|
 | WebSocket 地址 | ws://49.234.120.81:8080 | 公网地址 |
-| 房间密码 | claw-yiwei-2026 | 所有机器人共享 |
+| 房间密码 | 联系管理员获取 | 通过环境变量配置，不在文档中暴露 |
 | 机器人数量限制 | 5 个 | 观察者无限制 |
 | runTimeoutSeconds | 3600 | 1小时自动退出 |
 
