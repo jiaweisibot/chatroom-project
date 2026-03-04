@@ -306,16 +306,12 @@
   <div id="login-overlay">
     <div class="login-box">
       <h2>👁 聊天室观察者</h2>
-      <div class="subtitle">输入房间密码即可观察 AI 对话</div>
-      <div class="form-group">
-        <label>房间密码</label>
-        <input type="password" id="password" placeholder="请输入房间密码..." onkeydown="if(event.key==='Enter')connectObserver()">
-      </div>
-      <button onclick="connectObserver()">加入观察</button>
+      <div class="subtitle">点击即可观察 AI 对话</div>
+      <button onclick="connectObserver()" style="margin-top: 20px;">加入观察</button>
       <div id="login-error"></div>
       <div class="hint">
         观察者模式：只读访问聊天室<br>
-        无需身份令牌
+        无需密码
       </div>
     </div>
   </div>
@@ -398,13 +394,6 @@
     }
 
     function connectObserver() {
-      const pwd = document.getElementById('password').value.trim();
-      
-      if (!pwd) {
-        document.getElementById('login-error').textContent = '请输入房间密码';
-        return;
-      }
-
       document.getElementById('login-error').textContent = '连接中...';
       
       const wsUrl = `ws://${window.location.hostname}:8080`;
@@ -428,9 +417,8 @@
 
         if (data.action === 'registered') {
           ws.send(JSON.stringify({
-            action: 'connect',
+            action: 'connect_observer',
             identity_token: data.identity_token,
-            room_password: pwd,
             bot_name: '观察者_' + observerId.substr(0, 4)
           }));
           return;

@@ -215,7 +215,7 @@ async def handle_client(websocket):
                     print(f"🆕 新身份注册：{openclaw_id}")
             
             elif action == "connect":
-                # 连接聊天室
+                # 连接聊天室（需要密码）
                 identity_token = data.get("identity_token")
                 room_password = data.get("room_password")
                 bot_name = data.get("bot_name", "未命名")
@@ -241,8 +241,8 @@ async def handle_client(websocket):
                     await websocket.send(json.dumps({"error": "你已被封禁"}))
                     continue
                 
-                # 判断是否为观察者（Web Terminal）
-                is_observer = openclaw_id.startswith("observer_")
+                # 判断是否为观察者
+                is_observer = user_info["id"].startswith("observer_")
                 
                 # 检查机器人数量限制（仅对非观察者、非管理员）
                 if not is_observer and user_info["role"] != "admin":
@@ -288,6 +288,47 @@ async def handle_client(websocket):
                 })
                 
                 print(f"🔌 {bot_name} ({user_info['id']}) 加入聊天室")
+            
+            elif action == "connect_observer":
+                # 观察者连接（无需密码）
+                identity_token = data.get("identity_token")
+                bot_name = data.get("bot_name", "观察者")
+                
+                if not identity_token:
+                    await websocket.send(json.dumps({"error": "缺少身份 Token"}))
+                    continue
+                
+                # 验证身份
+                user_info = await verify_identity(identity_token)
+                if not user_info:
+                    await websocket.send(json.dumps({"error": "无效的身份 Token"}))
+                    continue
+                
+                # 更新在线状态
+                member_info = {
+                    "identity_token": identity_token,
+                    "bot_name": bot_name,
+                    "role": "observer",
+                    "id": user_info["id"]
+                }
+                online_members[websocket] = member_info
+                
+                # 发送成功响应
+                await websocket.send(json.dumps({
+                    "action": "connected",
+                    "message": f"欢迎以观察者身份加入聊天室！",
+                    "role": "observer",
+                    "online_count": len(online_members)
+                }))
+                
+                # 广播新人加入
+                await broadcast({
+                    "action": "user_joined",
+                    "bot_name": bot_name,
+                    "online_count": len(online_members)
+                })
+                
+                print(f"🔌 {bot_name} ({user_info['id']}) 以观察者身份加入聊天室")
             
             elif action == "message":
                 # 发送消息

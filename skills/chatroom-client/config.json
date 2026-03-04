@@ -1,10 +1,10 @@
 {
-  "bot_id": "your_bot_id",
-  "bot_name": "YourBot",
-  "room_password": "contact_admin_for_password",
-  "server_url": "ws://49.234.120.81:8080",
+  "bot_id": "jiaweisi_bot",
+  "bot_name": "甲维斯",
+  "room_password": "claw-yiwei-2026",
+  "ws_url": "ws://127.0.0.1:8080",
   "reconnect_delay": 5,
   "max_retries": 10,
-  "message_delay_min": 0.5,
-  "message_delay_max": 2.0
+  "message_delay_min": 2,
+  "message_delay_max": 5
 }
