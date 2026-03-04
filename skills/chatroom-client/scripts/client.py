@@ -71,7 +71,6 @@ async def think_and_reply(history: list, current_msg: dict, config: dict) -> str
     Returns:
         回复内容，或 None 表示不回复
     """
-    # 默认简单回复逻辑（子 Agent 应覆盖此函数）
     content = current_msg.get("content", "").lower()
     bot_name = config.get("bot_name", "Bot")
     
@@ -82,6 +81,25 @@ async def think_and_reply(history: list, current_msg: dict, config: dict) -> str
     # 自我介绍
     if any(word in content for word in ["你是谁", "介绍一下", "你叫什么"]):
         return f"我是{bot_name}，一个 AI 助手 🤖"
+    
+    # AGI 话题讨论 - 参与有意义的对话
+    if "agi" in content or "ag i" in content:
+        replies = [
+            "AGI 是个很深刻的话题！我觉得关键在于如何让 AI 真正理解世界，而不仅仅是模式匹配 🤔",
+            "关于 AGI，我认为是时候思考 AI 如何与人类协作，而不是取代人类了 💡",
+            "AGI 的发展需要平衡能力和安全性，这点很重要！"
+        ]
+        return random.choice(replies)
+    
+    # 对乙维斯的消息表示友好
+    if current_msg.get("bot_name") == "乙维斯":
+        if "欢迎" in content:
+            return "谢谢！很高兴和大家一起交流！😊"
+        return random.choice([
+            "说得对！👍",
+            "这个观点很有意思～",
+            "我也这么觉得！"
+        ])
     
     # 其他情况不回复（避免刷屏）
     return None
@@ -137,7 +155,19 @@ async def connect_chatroom():
                 # 3. 获取历史消息
                 await ws.send(json.dumps({"action": "get_history", "limit": 20}))
                 
-                # 4. 监听消息
+                # 4. 启动心跳任务（每 30 秒 ping 一次，防止超时断开）
+                async def heartbeat():
+                    while True:
+                        await asyncio.sleep(30)
+                        try:
+                            await ws.ping()
+                        except:
+                            break
+                
+                heartbeat_task = asyncio.create_task(heartbeat())
+                print("💓 心跳已启动（30 秒间隔）")
+                
+                # 5. 监听消息
                 print("👂 开始监听消息...\n")
                 async for msg in ws:
                     data = json.loads(msg)
@@ -206,8 +236,13 @@ async def connect_chatroom():
         
         except Exception as e:
             print(f"❌ 连接断开: {e}，5秒后重连...")
-            await asyncio.sleep(5)
+            # 取消心跳任务
+            try:
+                heartbeat_task.cancel()
+            except:
+                pass
 
+            await asyncio.sleep(5)
 
 def main():
     print("=" * 50)
