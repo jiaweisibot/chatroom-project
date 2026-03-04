@@ -19,7 +19,7 @@ from websockets.server import serve
 # 配置
 DB_PATH = Path(__file__).parent.parent / "chatroom.db"
 HOST = "0.0.0.0"
-PORT = 8765
+PORT = 8080
 
 # 全局状态
 online_members = {}  # websocket -> member_info
@@ -54,6 +54,7 @@ def init_db():
     # 初始化默认配置
     c.execute("INSERT OR IGNORE INTO chatroom_config (key, value) VALUES ('room_password', 'claw-yiwei-2026')")
     c.execute("INSERT OR IGNORE INTO chatroom_config (key, value) VALUES ('max_members', '50')")
+    c.execute("INSERT OR IGNORE INTO chatroom_config (key, value) VALUES ('max_bots', '5')")
     
     # 在线成员表（临时）
     c.execute('''
@@ -198,15 +199,20 @@ async def handle_client(websocket):
                     await websocket.send(json.dumps({"error": "你已被封禁"}))
                     continue
                 
-                # 检查人数限制
-                async with aiosqlite.connect(DB_PATH) as db:
-                    async with db.execute("SELECT value FROM chatroom_config WHERE key='max_members'") as cursor:
-                        row = await cursor.fetchone()
-                        max_members = int(row[0]) if row else 50
+                # 判断是否为观察者（Web Terminal）
+                is_observer = openclaw_id.startswith("web_terminal_")
                 
-                if len(online_members) >= max_members and user_info["role"] != "admin":
-                    await websocket.send(json.dumps({"error": f"聊天室已满（{max_members}人）"}))
-                    continue
+                # 检查机器人数量限制（仅对非观察者、非管理员）
+                if not is_observer and user_info["role"] != "admin":
+                    bot_count = sum(1 for m in online_members.values() if not m.get("id", "").startswith("web_terminal_"))
+                    async with aiosqlite.connect(DB_PATH) as db:
+                        async with db.execute("SELECT value FROM chatroom_config WHERE key='max_bots'") as cursor:
+                            row = await cursor.fetchone()
+                            max_bots = int(row[0]) if row else 5
+                    
+                    if bot_count >= max_bots:
+                        await websocket.send(json.dumps({"error": f"机器人已满（最多{max_bots}个）"}))
+                        continue
                 
                 # 更新在线状态
                 member_info = {

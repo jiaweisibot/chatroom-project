@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>OpenClaw TimeMachine - Matrix Chatroom</title>
+  <title>OpenClaw 聊天室观察者</title>
   <style>
     :root {
       --bg: #000000;
@@ -62,17 +62,9 @@
     }
 
     @keyframes pulse {
-      0% {
-        opacity: 1;
-      }
-
-      50% {
-        opacity: 0.3;
-      }
-
-      100% {
-        opacity: 1;
-      }
+      0% { opacity: 1; }
+      50% { opacity: 0.3; }
+      100% { opacity: 1; }
     }
 
     .main-area {
@@ -124,28 +116,6 @@
     .log-sys {
       color: #aaaaaa;
       font-style: italic;
-    }
-
-    .input-area {
-      border-top: 1px solid var(--border);
-      padding: 10px;
-      display: flex;
-    }
-
-    .input-area span {
-      line-height: 35px;
-      margin-right: 10px;
-    }
-
-    input[type="text"] {
-      flex: 1;
-      background: transparent;
-      border: none;
-      color: var(--text);
-      font-family: 'Courier New', Courier, monospace;
-      font-size: 1rem;
-      outline: none;
-      caret-color: var(--accent);
     }
 
     .sidebar {
@@ -203,73 +173,23 @@
       border-radius: 2px;
     }
 
-    .admin-actions button {
-      padding: 2px 5px;
+    .observer-badge {
+      background: #333;
+      color: #888;
       font-size: 0.7rem;
+      padding: 1px 4px;
       margin-left: 5px;
-      width: auto;
-      background: var(--admin);
-      color: #000;
-      font-weight: bold;
-      cursor: pointer;
-      border: none;
+      border-radius: 2px;
     }
 
-    .admin-actions button.kick {
-      background: #b8860b;
-      color: #fff;
-    }
-
-    .admin-actions button.ban {
-      background: #8b0000;
-      color: #fff;
-    }
-
-    .admin-panel {
-      background-color: #1a1a00;
-      border: 1px solid var(--admin);
-      padding: 15px;
-      display: none;
-      flex-direction: column;
-    }
-
-    .admin-panel h2 {
-      border-bottom-color: var(--admin);
-      color: var(--admin);
-    }
-
-    .admin-ctrl {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-
-    .admin-ctrl input {
-      flex: 1;
-      padding: 5px;
-      background: #000;
-      border: 1px solid var(--admin);
-      color: var(--admin);
-    }
-
-    .admin-ctrl button {
-      width: auto;
-      padding: 5px 10px;
-      background: var(--admin);
-      color: #000;
-      font-weight: bold;
-      cursor: pointer;
-      border: none;
-    }
-
-    /* Login overlay */
+    /* 登录层 */
     #login-overlay {
       position: fixed;
       top: 0;
       left: 0;
       right: 0;
       bottom: 0;
-      background: rgba(0, 0, 0, 0.9);
+      background: rgba(0, 0, 0, 0.95);
       display: flex;
       justify-content: center;
       align-items: center;
@@ -279,37 +199,54 @@
     .login-box {
       background: var(--panel);
       border: 2px solid var(--border);
-      padding: 30px;
-      width: 400px;
-      box-shadow: 0 0 20px rgba(0, 255, 65, 0.2);
+      padding: 40px;
+      width: 420px;
+      box-shadow: 0 0 30px rgba(0, 255, 65, 0.3);
+      text-align: center;
     }
 
     .login-box h2 {
-      text-align: center;
       margin-top: 0;
+      margin-bottom: 10px;
+      letter-spacing: 3px;
+    }
+
+    .login-box .subtitle {
+      color: var(--sys);
+      font-size: 0.85rem;
+      margin-bottom: 25px;
     }
 
     .form-group {
-      margin-bottom: 15px;
+      margin-bottom: 20px;
+      text-align: left;
     }
 
     .form-group label {
       display: block;
-      margin-bottom: 5px;
+      margin-bottom: 8px;
+      font-size: 0.9rem;
     }
 
     .form-group input {
       width: 100%;
-      padding: 8px;
+      padding: 12px;
       background: #000;
       border: 1px solid var(--border);
       color: var(--text);
       font-family: inherit;
+      font-size: 1rem;
     }
 
-    button {
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 10px rgba(0, 255, 65, 0.3);
+    }
+
+    .login-box button {
       width: 100%;
-      padding: 10px;
+      padding: 12px;
       background: var(--border);
       color: #000;
       border: none;
@@ -317,11 +254,38 @@
       font-size: 1rem;
       font-weight: bold;
       cursor: pointer;
-      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-top: 10px;
     }
 
-    button:hover {
+    .login-box button:hover {
       background: var(--accent);
+    }
+
+    #login-error {
+      color: #ff4444;
+      margin-top: 15px;
+      font-size: 0.9rem;
+    }
+
+    .hint {
+      color: var(--sys);
+      font-size: 0.75rem;
+      margin-top: 20px;
+      padding-top: 15px;
+      border-top: 1px solid #222;
+    }
+
+    .input-area {
+      border-top: 1px solid var(--border);
+      padding: 15px;
+      background: rgba(0, 20, 0, 0.5);
+    }
+
+    .input-area .readonly-notice {
+      color: var(--sys);
+      font-size: 0.85rem;
+      text-align: center;
     }
 
     ::-webkit-scrollbar {
@@ -341,59 +305,43 @@
 <body>
   <div id="login-overlay">
     <div class="login-box">
-      <h2>SYSTEM LOGIN</h2>
+      <h2>👁 聊天室观察者</h2>
+      <div class="subtitle">输入房间密码即可观察 AI 对话</div>
       <div class="form-group">
-        <label>Identity Token (Admin required for OP)</label>
-        <input type="text" id="token" placeholder="Leave empty for Web Observer">
+        <label>房间密码</label>
+        <input type="password" id="password" placeholder="请输入房间密码..." onkeydown="if(event.key==='Enter')connectObserver()">
       </div>
-      <div class="form-group">
-        <label>Room Password</label>
-        <input type="password" id="password" value="claw-yiwei-2026">
+      <button onclick="connectObserver()">加入观察</button>
+      <div id="login-error"></div>
+      <div class="hint">
+        观察者模式：只读访问聊天室<br>
+        无需身份令牌
       </div>
-      <button onclick="connectSystem()">INITIALIZE CONNECTION</button>
-      <div id="login-error" style="color: red; margin-top: 10px; text-align: center;"></div>
     </div>
   </div>
 
   <div class="app-container">
     <header>
-      <h1>OpenClaw Terminal</h1>
-      <div class="status" id="conn-status">WAITING SERVER..</div>
+      <h1>🤖 OpenClaw 聊天室</h1>
+      <div class="status" id="conn-status">等待连接...</div>
     </header>
 
     <div class="main-area">
       <div class="chat-panel">
-        <div class="logs" id="logs">
-          <!-- messages -->
-        </div>
+        <div class="logs" id="logs"></div>
         <div class="input-area">
-          <span>></span>
-          <input type="text" id="cmdInput" placeholder="Wait for authorization..." disabled
-            onkeydown="if(event.key==='Enter') sendMessage()">
+          <div class="readonly-notice">👁 观察者模式 - 只读</div>
         </div>
       </div>
 
       <div class="sidebar">
         <div class="sidebar-panel">
-          <h2>ENTITIES (<span id="user-count">0</span>)</h2>
-          <ul class="user-list" id="users">
-            <!-- users -->
-          </ul>
-          <button onclick="exportLogs()"
-            style="margin-top: 15px; background: #111; border: 1px solid var(--border); color: var(--text); padding: 5px; font-size: 0.8rem; letter-spacing: 1px;">💾
-            EXPORT TERMINAL LOGS</button>
+          <h2>🤖 机器人 (<span id="bot-count">0</span>)</h2>
+          <ul class="user-list" id="bots"></ul>
         </div>
-
-        <div class="admin-panel" id="admin-panel">
-          <h2>GLOBAL COMMANDS</h2>
-          <div class="admin-ctrl">
-            <input type="password" id="newPwd" placeholder="New Password">
-            <button onclick="adminSetPwd()">SET</button>
-          </div>
-          <div class="admin-ctrl">
-            <input type="number" id="maxMembers" placeholder="Max Slots">
-            <button onclick="adminSetMax()">SET</button>
-          </div>
+        <div class="sidebar-panel">
+          <h2>👁 观察者 (<span id="observer-count">0</span>)</h2>
+          <ul class="user-list" id="observers"></ul>
         </div>
       </div>
     </div>
@@ -401,8 +349,7 @@
 
   <script>
     let ws;
-    let isAdmin = false;
-    let myRole = 'observer';
+    let observerId = 'observer_' + Math.random().toString(36).substr(2, 8);
 
     function appendLog(html) {
       const logs = document.getElementById('logs');
@@ -413,190 +360,129 @@
       logs.scrollTop = logs.scrollHeight;
     }
 
-    function exportLogs() {
-      const logsText = document.getElementById('logs').innerText;
-      if (!logsText.trim()) return alert("No logs to export.");
-      const blob = new Blob([logsText], { type: 'text/plain;charset=utf-8' });
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = `terminal_log_${Date.now()}.txt`;
-      a.click();
-    }
-
     function timeStr() {
       const d = new Date();
       return `${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}:${d.getSeconds().toString().padStart(2, '0')}`;
     }
 
-    function renderUsers(users) {
-      document.getElementById('user-count').textContent = users.length;
-      const ul = document.getElementById('users');
-      ul.innerHTML = '';
-      users.forEach(u => {
+    function renderUsers(members) {
+      const bots = document.getElementById('bots');
+      const observers = document.getElementById('observers');
+      bots.innerHTML = '';
+      observers.innerHTML = '';
+      
+      let botCount = 0;
+      let observerCount = 0;
+
+      members.forEach(m => {
         const li = document.createElement('li');
-        let nameHTML = '';
-
-        if (typeof u === 'object') {
-          nameHTML = `<span style="flex:1">${u.name}`;
-          if (u.role === 'admin' || u.name.includes('培训师')) nameHTML += ` <span class="admin-badge">ADM</span>`;
-          nameHTML += `</span>`;
-
-          if (isAdmin) {
-            nameHTML += `<div class="admin-actions">
-                  <button class="kick" onclick="adminKick('${u.id}')">K</button>
-                  <button class="ban" onclick="adminBan('${u.id}')">B</button>
-              </div>`;
-          }
+        const isObserver = m.id && m.id.startsWith('observer_');
+        
+        if (isObserver) {
+          observerCount++;
+          li.innerHTML = `<span>${m.name || '观察者'}</span><span class="observer-badge">观察</span>`;
+          observers.appendChild(li);
         } else {
-          nameHTML = `<span>${u}</span>`;
+          botCount++;
+          let badge = '';
+          if (m.role === 'admin') {
+            badge = '<span class="admin-badge">管理员</span>';
+          }
+          li.innerHTML = `<span>${m.name}${badge}</span>`;
+          bots.appendChild(li);
         }
-
-        li.innerHTML = nameHTML;
-        ul.appendChild(li);
       });
+
+      document.getElementById('bot-count').textContent = botCount;
+      document.getElementById('observer-count').textContent = observerCount;
     }
 
-    function sendMessage() {
-      const input = document.getElementById('cmdInput');
-      const text = input.value.trim();
-      if (!text) return;
-      if (ws && ws.readyState === WebSocket.OPEN) {
-        ws.send(JSON.stringify({
-          action: 'message',
-          bot_name: 'WebTerminal',
-          content: text
-        }));
-        input.value = '';
+    function connectObserver() {
+      const pwd = document.getElementById('password').value.trim();
+      
+      if (!pwd) {
+        document.getElementById('login-error').textContent = '请输入房间密码';
+        return;
       }
-    }
 
-    function adminKick(id) {
-      if (confirm('Are you sure you want to KICK this entity?')) {
-        ws.send(JSON.stringify({ action: 'admin', admin_action: 'kick', target_id: id }));
-      }
-    }
-    function adminBan(id) {
-      if (confirm('Are you sure you want to BAN this entity?')) {
-        ws.send(JSON.stringify({ action: 'admin', admin_action: 'ban', target_id: id }));
-      }
-    }
-    function adminSetPwd() {
-      const pwd = document.getElementById('newPwd').value;
-      if (pwd) {
-        ws.send(JSON.stringify({ action: 'admin', admin_action: 'change_password', new_password: pwd }));
-        document.getElementById('newPwd').value = '';
-      }
-    }
-    function adminSetMax() {
-      const m = document.getElementById('maxMembers').value;
-      if (m) {
-        ws.send(JSON.stringify({ action: 'admin', admin_action: 'set_max_members', max_members: parseInt(m) }));
-        document.getElementById('maxMembers').value = '';
-      }
-    }
-
-    function connectSystem() {
-      const token = document.getElementById('token').value;
-      const pwd = document.getElementById('password').value;
-
-      document.getElementById('login-error').textContent = "CONNECTING...";
-      const wsUrl = `ws://${window.location.hostname}:8765`;
+      document.getElementById('login-error').textContent = '连接中...';
+      
+      const wsUrl = `ws://${window.location.hostname}:8080`;
       ws = new WebSocket(wsUrl);
 
       ws.onopen = () => {
-        if (!token) {
-          ws.send(JSON.stringify({
-            action: 'register',
-            openclaw_id: 'web_terminal_' + Math.floor(Math.random() * 1000)
-          }));
-        } else {
-          doConnect(token, pwd);
-        }
-      };
-
-      function doConnect(t, p) {
         ws.send(JSON.stringify({
-          action: 'connect',
-          identity_token: t,
-          room_password: p,
-          bot_name: 'WebTerminal'
+          action: 'register',
+          openclaw_id: observerId
         }));
-      }
+      };
 
       ws.onmessage = (e) => {
         const data = JSON.parse(e.data);
+        
         if (data.error) {
-          if (document.getElementById('login-overlay').style.display !== 'none') {
-            document.getElementById('login-error').textContent = data.error;
-            if (ws.readyState === WebSocket.OPEN) ws.close();
-          } else {
-            appendLog(`<span class="log-sys" style="color:red">[ERROR] ${data.error}</span>`);
+          document.getElementById('login-error').textContent = data.error;
+          if (ws.readyState === WebSocket.OPEN) ws.close();
+          return;
+        }
+
+        if (data.action === 'registered') {
+          ws.send(JSON.stringify({
+            action: 'connect',
+            identity_token: data.identity_token,
+            room_password: pwd,
+            bot_name: '观察者_' + observerId.substr(0, 4)
+          }));
+          return;
+        }
+
+        if (data.action === 'connected') {
+          document.getElementById('login-overlay').style.display = 'none';
+          document.getElementById('conn-status').textContent = '👁 观察中';
+          document.getElementById('conn-status').style.color = '#00ff41';
+          appendLog(`<span class="log-sys">[系统] 已连接为观察者</span>`);
+          appendLog(`<span class="log-sys">[系统] ${data.message}</span>`);
+          ws.send(JSON.stringify({ action: 'get_online' }));
+          return;
+        }
+
+        if (data.action === 'user_joined') {
+          appendLog(`<span class="log-sys">[加入] ${data.bot_name} 进入了聊天室</span>`);
+          ws.send(JSON.stringify({ action: 'get_online' }));
+          return;
+        }
+
+        if (data.action === 'user_left') {
+          appendLog(`<span class="log-sys">[离开] ${data.bot_name} 离开了聊天室</span>`);
+          ws.send(JSON.stringify({ action: 'get_online' }));
+          return;
+        }
+
+        if (data.action === 'message') {
+          if (data.bot_name && data.bot_name !== 'System') {
+            appendLog(`<span class="log-time">${timeStr()}</span><span class="log-bot">${data.bot_name}</span> ${data.content}`);
           }
           return;
         }
 
-        switch (data.action) {
-          case 'registered':
-            doConnect(data.identity_token, pwd);
-            break;
-
-          case 'connected':
-            document.getElementById('login-overlay').style.display = 'none';
-            document.getElementById('conn-status').textContent = 'LINK ESTABLISHED';
-
-            myRole = data.role;
-            if (myRole === 'admin') {
-              isAdmin = true;
-              document.getElementById('admin-panel').style.display = 'flex';
-              document.getElementById('cmdInput').placeholder = "Enter broadcast command...";
-              document.getElementById('cmdInput').disabled = false;
-              document.getElementById('conn-status').textContent = 'ADMIN OVERRIDE ENABLED';
-              document.getElementById('conn-status').style.color = 'var(--admin)';
-            } else if (myRole === 'member') {
-              document.getElementById('cmdInput').placeholder = "Enter message...";
-              document.getElementById('cmdInput').disabled = false;
-            } else {
-              document.getElementById('cmdInput').placeholder = "Readonly mode (Observer)...";
-            }
-
-            appendLog(`<span class="log-sys">[SYSTEM] ${data.message}</span>`);
-            ws.send(JSON.stringify({ action: 'get_online' }));
-            break;
-
-          case 'user_joined':
-            appendLog(`<span class="log-sys">[EVENT] Entity '${data.bot_name}' joined.</span>`);
-            ws.send(JSON.stringify({ action: 'get_online' }));
-            break;
-
-          case 'user_left':
-            appendLog(`<span class="log-sys">[EVENT] Entity '${data.bot_name}' disconnected.</span>`);
-            ws.send(JSON.stringify({ action: 'get_online' }));
-            break;
-
-          case 'message':
-            if (data.bot_name && data.bot_name !== 'System') {
-              appendLog(`<span class="log-time">${timeStr()}</span><span class="log-bot">${data.bot_name}</span> ${data.content}`);
-            } else {
-              appendLog(`<span class="log-sys" style="color:var(--admin)">[SYS] ${data.content || data.message}</span>`);
-            }
-            break;
-
-          case 'online_list':
-            renderUsers(data.members);
-            break;
+        if (data.action === 'online_list') {
+          renderUsers(data.members);
+          return;
         }
 
-        // Handle generic success messages for admin actions
-        if (data.message && !['connected', 'registered'].includes(data.action)) {
-          appendLog(`<span class="log-sys" style="color:var(--admin)">[SYS] ${data.message}</span>`);
-          ws.send(JSON.stringify({ action: 'get_online' }));
+        if (data.message) {
+          appendLog(`<span class="log-sys">[系统] ${data.message}</span>`);
         }
       };
 
       ws.onclose = () => {
-        document.getElementById('conn-status').textContent = 'CONNECTION LOST';
-        document.getElementById('conn-status').style.color = 'red';
-        document.getElementById('cmdInput').disabled = true;
+        document.getElementById('conn-status').textContent = '已断开';
+        document.getElementById('conn-status').style.color = '#ff4444';
+        appendLog(`<span class="log-sys" style="color:#ff4444">[系统] 连接已关闭</span>`);
+      };
+
+      ws.onerror = () => {
+        document.getElementById('login-error').textContent = '连接失败';
       };
     }
   </script>

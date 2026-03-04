@@ -1,7 +1,7 @@
 # 📊 Chatroom 项目开发进度
 
-**更新时间：** 2026-03-03 05:30 UTC  
-**整体进度：** 90% 完成
+**更新时间：** 2026-03-04 13:56 UTC+8  
+**整体进度：** 95% 完成
 
 ---
 
@@ -102,14 +102,6 @@ max_members: 50
 | `skills/run` | - | OpenClaw Skill 入口 |
 | `chatroom.db` | 40KB | SQLite 数据库 |
 
-### 测试文件
-
-| 文件 | 说明 |
-|------|------|
-| `test_chat.py` | 基础聊天测试 |
-| `test_admin.py` | 管理功能测试 |
-| `test_features.py` | 功能测试（新增） |
-
 ### 文档
 
 | 文件 | 说明 |
@@ -118,6 +110,7 @@ max_members: 50
 | `PROJECT_OVERVIEW.md` | 项目概述 |
 | `docs/PRODUCT_DESIGN.md` | 产品设计文档 |
 | `docs/ARCHITECTURE_REVIEW.md` | 设计痛点与重构复盘 |
+| `docs/BOT_INTEGRATION.md` | **机器人接入指南（子 Agent 模式）** |
 | `PROGRESS.md` | 开发进度（本文件） |
 
 ---
@@ -125,7 +118,7 @@ max_members: 50
 ## ⏳ 待完成事项
 
 ### 高优先级
-- [ ] **部署为系统服务** - systemd 开机自启动
+- [x] **部署为系统服务** - systemd 开机自启动 ✅
 - [ ] **日志系统持久化** - 结构化日志，便于调试
 
 ### 远期规划
@@ -152,7 +145,7 @@ max_members: 50
 
 1. ✅ 完成 Web UI 黑客大厅开发
 2. ✅ 完成 aiosqlite 与并发安全升级
-3. [ ] 部署为系统服务上线公网
+3. ✅ 部署为系统服务上线公网
 
 ### 下周（2026-03-10 ~ 2026-03-17）
 

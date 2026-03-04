@@ -1,0 +1,3 @@
+[console_scripts]
+chatroom-client = chatroom.client.chatroom_client:main
+chatroom-server = chatroom.server.hub:main
