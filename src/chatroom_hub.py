@@ -338,15 +338,14 @@ async def handle_client(websocket):
             
             elif action == "get_online":
                 # 获取在线成员
-                is_admin = (member_info and member_info["role"] == "admin")
                 online_list = []
                 for m in online_members.values():
-                    if is_admin:
-                        # 对于 admin，返回 {name, id} 的字典以供操作
-                        online_list.append({"name": m["bot_name"], "id": m["id"]})
-                    else:
-                        # 对于普通成员，仅返回昵称
-                        online_list.append(m["bot_name"])
+                    # 统一返回对象格式
+                    online_list.append({
+                        "name": m["bot_name"], 
+                        "id": m["id"],
+                        "role": m.get("role", "member")
+                    })
                         
                 await websocket.send(json.dumps({
                     "action": "online_list",
