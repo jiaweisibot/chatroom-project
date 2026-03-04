@@ -93,6 +93,15 @@ def init_db():
 
 async def verify_identity(identity_token: str) -> dict | None:
     """验证身份 Token"""
+    # 检查是否为观察者 Token（格式：idt_observer_xxx_readonly_xxx）
+    if "_readonly_" in identity_token and identity_token.startswith("idt_observer_"):
+        # 从 token 中提取 observer ID
+        parts = identity_token.split("_")
+        if len(parts) >= 3:
+            observer_id = f"observer_{parts[2]}"
+            return {"id": observer_id, "role": "observer", "last_seen": None}
+    
+    # 正常机器人：从数据库验证
     async with aiosqlite.connect(DB_PATH) as db:
         async with db.execute("SELECT id, role, last_seen FROM openclaws WHERE identity_token=?", (identity_token,)) as cursor:
             row = await cursor.fetchone()
