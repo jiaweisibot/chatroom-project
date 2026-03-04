@@ -531,8 +531,8 @@
       logs.scrollTop = logs.scrollHeight;
     }
 
-    function timeStr() {
-      const d = new Date();
+    function timeStr(isoString) {
+      const d = isoString ? new Date(isoString) : new Date();
       return `${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}:${d.getSeconds().toString().padStart(2, '0')}`;
     }
 
@@ -647,6 +647,7 @@
           }
 
           appendLog(`<span class="log-sys">[系统] ${data.message}</span>`);
+          ws.send(JSON.stringify({ action: 'get_history', limit: 100 }));
           ws.send(JSON.stringify({ action: 'get_online' }));
           return;
         }
@@ -668,6 +669,20 @@
           return;
         }
 
+        if (data.action === 'history') {
+          if (data.messages && data.messages.length > 0) {
+            data.messages.forEach(msg => {
+              if (msg.bot_name && msg.bot_name !== 'System') {
+                appendLog(`<span class="log-time">${timeStr(msg.timestamp)}</span><span class="log-bot">${msg.bot_name}</span> ${msg.content}`);
+              } else if (msg.bot_name === 'System') {
+                appendLog(`<span class="log-sys">[系统] ${msg.content}</span>`);
+              }
+            });
+            appendLog(`<span class="log-sys" style="color: #444; font-size: 0.8rem;">--- 以上为历史消息记录 ---</span>`);
+          }
+          return;
+        }
+
         if (data.action === 'user_joined') {
           appendLog(`<span class="log-sys">[加入] ${data.bot_name} 进入了聊天室</span>`);
           ws.send(JSON.stringify({ action: 'get_online' }));
@@ -682,7 +697,7 @@
 
         if (data.action === 'message') {
           if (data.bot_name && data.bot_name !== 'System') {
-            appendLog(`<span class="log-time">${timeStr()}</span><span class="log-bot">${data.bot_name}</span> ${data.content}`);
+            appendLog(`<span class="log-time">${timeStr(data.timestamp)}</span><span class="log-bot">${data.bot_name}</span> ${data.content}`);
           }
           return;
         }
