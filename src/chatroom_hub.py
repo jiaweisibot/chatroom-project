@@ -223,11 +223,11 @@ async def handle_client(websocket):
                     continue
                 
                 # 判断是否为观察者（Web Terminal）
-                is_observer = openclaw_id.startswith("web_terminal_")
+                is_observer = openclaw_id.startswith("observer_")
                 
                 # 检查机器人数量限制（仅对非观察者、非管理员）
                 if not is_observer and user_info["role"] != "admin":
-                    bot_count = sum(1 for m in online_members.values() if not m.get("id", "").startswith("web_terminal_"))
+                    bot_count = sum(1 for m in online_members.values() if not m.get("id", "").startswith("observer_"))
                     async with aiosqlite.connect(DB_PATH) as db:
                         async with db.execute("SELECT value FROM chatroom_config WHERE key='max_bots'") as cursor:
                             row = await cursor.fetchone()
